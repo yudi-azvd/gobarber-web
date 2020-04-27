@@ -6,9 +6,10 @@ import React, {
   useCallback,
 } from 'react';
 import { IconBaseProps } from 'react-icons';
+import { FiAlertCircle } from 'react-icons/fi';
 import { useField } from '@unform/core';
 
-import { Container } from './styles';
+import { Container, Error } from './styles';
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   name: string;
@@ -16,7 +17,7 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 }
 
 const Input: React.FC<InputProps> = ({ name, icon: Icon, ...rest }) => {
-  const inpurRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const { fieldName, defaultValue, error, registerField } = useField(name);
   const [isFocused, setIsFocused] = useState(false);
   const [hasContent, setHasContent] = useState(false);
@@ -24,7 +25,7 @@ const Input: React.FC<InputProps> = ({ name, icon: Icon, ...rest }) => {
   useEffect(() => {
     registerField({
       name: fieldName,
-      ref: inpurRef.current,
+      ref: inputRef.current,
       path: 'value',
     });
   }, [fieldName, registerField]);
@@ -36,22 +37,30 @@ const Input: React.FC<InputProps> = ({ name, icon: Icon, ...rest }) => {
   const handleInputBlur = useCallback(() => {
     setIsFocused(false);
 
-    setHasContent(!!inpurRef.current?.value);
+    setHasContent(!!inputRef.current?.value);
   }, []);
 
   return (
     <>
-      <Container hasContent={hasContent} isFocused={isFocused}>
+      <Container
+        isErrored={!!error}
+        hasContent={hasContent}
+        isFocused={isFocused}
+      >
         {Icon && <Icon size={20} />}
         <input
           onFocus={handleInpurFocus}
           onBlur={handleInputBlur}
           defaultValue={defaultValue}
-          ref={inpurRef}
+          ref={inputRef}
           {...rest}
         />
+        {error && (
+          <Error title={error}>
+            <FiAlertCircle color="#c53030" size={20} />
+          </Error>
+        )}
       </Container>
-      {error && <span>{error}</span>}
     </>
   );
 };

@@ -4,6 +4,8 @@ import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 import * as Yup from 'yup';
 
+import getValidationErrors from '../../utils/getValidationErrors';
+
 import { Container, Content, Background } from './styles';
 
 import Button from '../../components/Button';
@@ -16,21 +18,22 @@ const SignUp: React.FC = () => {
 
   const handleSubmit = useCallback(async (data: object) => {
     try {
+      formRef.current?.setErrors({});
+
       const schema = Yup.object().shape({
-        name: Yup.string().required(),
+        name: Yup.string().required('O nome é obrigatório'),
         email: Yup.string()
           .email('E-mail é obrigatório')
           .required('Digite um e-mail válido'),
         password: Yup.string().min(6, 'No mínimo 6 dígitos'),
       });
 
-      formRef.current?.setErrors({
-        name: 'Tá cagado',
-      });
       await schema.validate(data, { abortEarly: false });
     } catch (error) {
-      console.log(error);
-      const validationErrors = {};
+      if (error) console.log(error);
+      const validationErrors = getValidationErrors(error);
+
+      formRef.current?.setErrors(validationErrors);
     }
   }, []);
 
