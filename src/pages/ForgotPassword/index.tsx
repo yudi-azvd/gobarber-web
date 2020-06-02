@@ -17,7 +17,7 @@ import logo from '../../assets/logo.svg';
 import { useToast } from '../../hooks/toast';
 import api from '../../services/api';
 
-interface ForgotPasswordFormData {
+interface ResetPasswordFormData {
   email: string;
   password: string;
 }
@@ -29,7 +29,7 @@ const ForgotPassword: React.FC = () => {
   const { addToast } = useToast();
 
   const handleSubmit = useCallback(
-    async (data: ForgotPasswordFormData) => {
+    async (data: ResetPasswordFormData) => {
       try {
         setLoading(true);
 
