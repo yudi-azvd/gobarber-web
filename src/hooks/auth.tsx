@@ -34,6 +34,8 @@ const AuthProvider: React.FC = ({ children }) => {
     const user = localStorage.getItem('@gobarber:user');
 
     if (token && user) {
+      api.defaults.headers.authorization = `Bearer ${token}`;
+
       return {
         token,
         user: JSON.parse(user),
@@ -54,12 +56,16 @@ const AuthProvider: React.FC = ({ children }) => {
     localStorage.setItem('@gobarber:token', token);
     localStorage.setItem('@gobarber:user', JSON.stringify(user));
 
+    api.defaults.headers.authorization = `Bearer ${token}`;
+
     setData({ token, user });
   }, []);
 
   const signOut = useCallback(() => {
     localStorage.removeItem('@gobarber:token');
     localStorage.removeItem('@gobarber:user');
+
+    // delete api.defaults.headers.authorization;
 
     setData({} as AuthState);
   }, []);
